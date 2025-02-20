@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>        
+        <form action="" name="myform" id="myform">
+            이름 : <input type="text" name="username" id="username"><br/>
+            나이 : <input type="text" name="age" id="age"><br/>
+            <button type="button" id="btnSend1">get전송</button><br/>
+            <button type="button" id="btnSend2">post전송</button><br/>
+        </form> 
+    </body>
+</html>
+
+<script>
+    window.onload = () =>{
+        document.querySelector("#btnSend1").addEventListener("click",
+            ()=>{
+                let frm = document.querySelector("#myform");
+                frm.action = "/save";
+                frm.method = "get";
+                frm.submit();
+            })
+        document.querySelector("#btnSend2").addEventListener("click",
+            ()=>{
+                let frm = document.querySelector("#myform");
+                frm.action = "/save";
+                frm.method = "post";
+                frm.submit();
+            })
+    }
+</script>
+

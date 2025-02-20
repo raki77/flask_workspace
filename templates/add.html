@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>덧셈연산 페이지</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(()=> {
+                $("#btnSend1").click(() => {
+                    //alert("add");
+                    $("#myform").prop("action", "/addCalc");
+                    $("#myform").prop("method", "get");
+                    $("#myform").submit();                    
+                });
+            });
+        </script>
+    </head>
+    <body>        
+        <form action="" name="myform" id="myform">
+            덧셈 하기 <br/>
+            변수1 : <input type="text" name="val01" id="val01"><br/>
+            변수2 : <input type="text" name="val02" id="val02"><br/>
+            <button type="button" id="btnSend1">get전송</button><br/>            
+        </form> 
+    </body>
+</html>
+
+<!--<script>
+    window.onload = () =>{
+        document.querySelector("#btnSend1").addEventListener("click",
+            ()=>{
+                let frm = document.querySelector("#myform");
+                frm.action = "/addCalc";
+                frm.method = "get";
+                frm.submit();
+            }) 
+    }
+</script>-->
+
