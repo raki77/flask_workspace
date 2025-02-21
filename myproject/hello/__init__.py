@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from . import guestbook
 
 def create_app(test_config=None):   
     app = Flask(__name__, instance_relative_config=True) # creates the flask instance
@@ -14,7 +15,16 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    @app.route('/hello')
-    def hello():
+    @app.route('/')
+    def index():
         return 'Hello, World!'
+    
+    # 파일결합 추가됨. 파일이 많아지면
+    app.register_blueprint(guestbook.blueprint)
     return app
+
+""" 
+myproject에서
+set FLASK_APP=hello
+flask run
+"""

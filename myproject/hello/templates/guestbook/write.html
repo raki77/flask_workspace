@@ -1,0 +1,26 @@
+
+<!DOCTYPE html> 
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <form action="" method="post" name="myform" id="myform">
+            제목 : <input type="text" name="title" id="title" /><br/>
+            작성자 : <input type="text" name="writer" id="writer" /><br/>
+            내용 : <input type="text" name="contents" id="contents" /><br/>
+            <button type="button" id="btnSave">등록</button>
+        </form>
+    </body>
+    <script>
+        $(document).ready(() => {
+            $("#btnSave").click(()=> $("#myform").attr("action", "/guestbook/save").submit());            
+        });
+    </script>
+</html>
