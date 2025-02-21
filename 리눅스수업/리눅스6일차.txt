@@ -1,0 +1,478 @@
+네트워크 
+
+cmd 
+ipconfig 
+ipconfig/all 
+
+물리적주소 : 24-F5-AA-E2-B1-51  랜카드(이더넷) 마다 고유하게 설정된다
+(MAC address)                  전세계 랜카드는 각자 이 값이 다르다 
+
+16진수, 랜카드 제조할때 값이 충돌안나도록 한다 
+
+
+IP 주소 : 논리적 주소, 영구불변 아니다. 
+4byte 주소체계
+8bit.8bit.8bit.8bit  문자열로 
+
+부호없는 8비트의 경우 (0~255)
+8bit  00000000  제일작은값    
+      11111111  제일큰값 
+
+0.0.0.0 ~ 255.255.255.255   특수목적용IP 
+127~ :  본인 컴퓨터를 지칭한다. loop back  주소 
+192~ :  공유기 사설 아이피 
+10 ~ :  공유기 사설 아이피 
+
+211.1.68.1  ---> 공유기   ---------  1
+                         ---------  2
+                 각 컴퓨터마다 공유기가 아이피를 부여한다. 
+                 이때 부여할때 192로 시작해야 한다 
+
+4byte 를  5개의 그룹으로 나눈다 
+A  보통 국가기관이나 미국대학이나 연구기관
+B  대학교나 대부분의 연구기관 
+C  보통 우리가 사용하는 아이피 
+
+D
+E
+
+A   -- 첫비트가 0으로 시작      0000 0000 ~ 01111111=> 0
+B   -- 10 으로 시작            1000 0000  => 128~
+C   -- 110                    1100 0000  => 128+64= 192
+D   -- 1110                   1110 0000
+E   -- 11110
+
+A  네트워크가 1byte  호스트 3byte 
+B  네트워크가 2byte  호스트 2byte 
+C  네트워크가 3byte  호스트 1byte 
+
+
+같은 네트워크에 있다 
+아이피 211시작 -C클래스  211.14.18  :네트워크 
+A                                B 
+211.14.18.1                      211.14.18.2
+
+211.14.18.1 
+255.255.255.0  비트 &연산 
+---------------
+0 & 1 = 0
+1 & 1 = 1
+A & 1 = A 원래데이터
+A & 0 = 0  
+------------
+네트워크 주소 알아오기  : 211.14.18   211.14.18
+
+동일한 네트워크에 있는 컴퓨터들한테 모두 패킷을 보낸다. 
+(브로드캐스팅) 255.255.255.255 
+mac address 
+ip            목적지 : ip 
+port 패킷에 넣어서 모두한테 보내면 해당이 안되면 패킷을 버리고 
+해당사항 되는 컴퓨터만 응답을 보낸다. mac address 붙여서 
+
+동일 네트워크가 아닐때는 라우터의 주소를 가져온다 .
+라우터 외부와 연결을 하는 종단 장비 
+
+255.255.255.0 : C클래스 서브넷마스크 
+255.255.0.0   : B클래스 서브넷마스크 
+255.0.0.0     : A클래스 서브넷마스크 
+
+기본게이트웨이 : 들어오는 문  : 아이피.1 
+
+
+
+라우터 : 네트워크와 네트워크를 연결하는 장비이다. 
+        라우터 장비를 통해서 외부망으로 나간다 
+
+동일네트워크이면 브로드캐스팅을 해서 상대컴퓨터로부터 응답을 받아온다 
+다른네트워크이면 라우터 주소를 알아온다 
+
+피라미드 구조라 전세계에 어디 있은 해당 아이피가 있기만 하면 20홉 
+이내에 왠만하면 목적지 컴퓨터를 찾아온다 
+
+일단 목적지 정보를 알아오면 우리 컴퓨터에 캐시 시켜놓는다 
+다른 메모리가 있어서 정보를 기술해놓는다 
+
+arp -a  : 캐쉬 테이블 확인 명령어 
+
+프로그래머 입장에서 바라보면 - 네트워크 프로그램 
+버클리소켓 - 네트워크 프로그램을 도와주는 라이브러리 
+            TCP/UDP
+            내가 나만의 채팅프로그램을 만들고 싶다 
+            소켓의 식별값 포트이다 
+
+서버소켓 포트번호는 다알아야 한다. 웹서버 80 으로 시작 
+요청이오는건 그때 달라요 
+
+오라클 : 1521 
+mysql : 3306 
+ftp : 21 
+telnet : 23 
+ssh : 22   ...............  알려진 포트번호들이 있음 
+
+통신에 필요한 기본정보 : mac address, ip, port 번호
+
+리눅스에서 현재 사용주인 포트번호 정보 확인 
+cat /etc/services 
+
+서비스 실행 명령어 
+sudo systemctl  start NetworkManager.service 
+
+상태확인명령어
+sudo systemctl  status NetworkManager
+
+설치 명령어 
+sudo apt install network-manager 
+
+sudo systemctl  status NetworkManager
+
+부팅 하면 자동으로 돌도록 
+sudo systemctl  enable NetworkManager.service 
+
+이 서비스가 동작하면 사용자는 터미널에서 nmcli 프로그램이나 
+그놈에서 설정-네트워크 또는 터미널-nm-connection-editor 를 사용할 수 있다
+
+
+터미널 : nm-connection-editor
+nmcli  
+ctrl-c 
+
+상태확인 - 현재 
+nmcli general status 
+nmcli gen
+
+네트워크 연결확인 
+nmcli net con 
+
+네트워트 연결 닫기 
+nmcli net off 
+nmcli net con 
+
+네트워트 연결 열기 
+nmcli net on 
+nmcli net con
+
+네트워크 확인 명령어  : 윈도우 ipconfig , 리눅스  ifconfig
+프로그램 설치가 필요하다 
+
+sudo apt install net-tools 
+ifconfig 
+
+nmcli con show      네트워크  연결프로파일 출력하기 
+이름 : 유선 연결 1 
+
+nmcli con down '유선 연결 1'  다운시킴 
+nmcli con show
+
+nmcli con up '유선 연결 1'     실행시킴 
+nmcli con show
+
+#네트워크 연결추가 
+sudo nmcli con add type ethernet  con-name test-net   ifname ens33 ip4 
+192.168.1.10/24 gw4 192.168.1.1 
+nmcli con show
+
+새로운 이더넷 연결을 시작하려면 
+sudo nmcli con up test-net ifname ens33
+nmcli con show
+
+nmcli      아이피 바뀐거 확인  
+
+sudo nmcli con up '유선 연결 1' ifname ens33  #원상복구
+nmcli con show
+
+nmcli connection delete test-net
+nmcli con show 
+
+
+ip 명령어는 재부팅시 사라짐, 직접 설정파일에 기술해야 한다 
+
+할당된 주소 보기 
+ip addr show 
+ip addr show ens33    특정 장비 확인하기 
+
+새로운 아이피 추가하기  - 장치명이 ens33인 장치에 새로운 아이피 추가 
+/24 - 255.255.255.0   - 서브넷마스크 
+
+sudo ip addr add 192.168.1.20/24 dev ens33 
+
+#유동아이피로 바꾸기 
+nmcli connection add type ethernet con-name '유선 연결 1' ifname ens33 
+nmcli con up '유선 연결 1'  ifname ens33
+
+유동아이피 - 웬만하면 알아서 한다 
+고정아이피 - DNS 서버를 설정해야 한다 
+아이피 -> DNS서버 필수
+
+DNS 서버 
+
+
+OSI 7계층 (80년대)
+응용계층 
+프리젠테이션 - 서로 표현식이 맞아야 한다. 
+             10010010    왼쪽끝에서부터 읽는 컴퓨터, 오른쪽끝에서 읽는 컴퓨터 
+             양쪽에서 표현을 맞추는걸 
+세션계층     - 논리적 연결 상태 
+
+응용계층 
+TCP/UDP 계층   - 소켓만들어서 서로 연결하기 (TCP/UDP)
+(트랜스포트계층)  TCP : 상대방이 데이터를 수신했는지를 확인한다. 
+                 응답이 없으면 응답올때까지 계속 패킷을 보내서 테스트를 한다
+                 신뢰성 있는 프로토콜(대부분의 경우), 전화 
+                 UDP : 상대방이 수신하던 말던 계속 보낸다. 
+                    비신뢰성 프로토콜이라고 한다. 보통 스트림서비스에 적합하다 
+                    (인터넷방송)
+네트워크 계층 - 주소관리및 경로탐색   
+링크장치 - 장치드라이버 (이더넷)
+물리계층 - 전송매체(광케이블)
+
+단계별로 각자 처리할 내용이 달라서 각자 맡은 부분만 프로그램한다. 
+네트워크계층 이하는 프로그램 하지 않음 
+네트워크 프로그램을 할때 소켓라이브러리를 사용한다. (버클리소켓-linux, 윈소켓-windows)
+
+소켓 내부구조 몰라도 소켓객체를 만들면 통신이 가능하다 
+
+이더넷 장비명이 : ens33  누구맘대로 우분트만든사람들 마음대로 
+ip addr  show ens33   
+ens33 장비의 아이피를 변경한다 
+
+sudo ip addr add 192.168.1.20 dev ens33 
+삭제 
+
+sudo ip addr del 192.168.1.20 dev ens33 
+
+라우팅 테이블과 게이트웨이 주소 관리 : routes 명령 
+
+라우팅 테이블 보기 : ip route show  
+
+
+고정아이피 서비스를 쓰려면  /etc/network/interfaces 파일을 수정해야 한다.(우분트)
+sudo gedit /etc/network/interfaces
+
+DNS 서버 : Domain Name Server 
+www.goolge.com (도메인) ------> DNS서버 
+                        <----- IP를 보내준다 
+
+고정아이피로 변경하면 DNS 서버도 줘야 한다. 고정 DNS 서버 아이피를 등록해야 한다 
+DHS 서버 : 동적으로 아이피를 할당하는 서버이다. 
+
+DNS서버 주소 할당하는 파일 
+cat /etc/resolv.conf 
+
+DNS서버 확인 명령어 
+sysemd-resolve --status 
+
+dns서버와 대화 주고 받기 
+nslookup 
+>www.daum.net 
+
+호스트 이름 확인하기  
+uname -n 
+uname -a   시스템관련정보까지 모두 나온다 
+
+hostname  :   호스트이름 확인도 되고 설정도 된다. 
+
+hostname 
+
+#호스트명 변경하기 
+sudo hostname myubuntu 
+hostname 
+cat /etc/hostname 파일이 있는 이 파일에 바꿔야 부팅해도 동일한 이름을 유지한다 
+
+sudo gedit /etc/hostname 
+myubuntu
+
+통신장비확인 명령어 
+ping (icmp)
+
+ping -c 보낼패킷개수 아이피 
+ping www.google.com 
+ctrl-C  로 종료
+
+ping -c 5  www.google.com
+
+nmcli con show 
+nmcli con up '유선 연결 1'  ifname ens33
+nmcli con show
+
+#통신경로확인하기 
+sudo apt install traceroute 
+traceroute www.google.com 
+* * * : 추적불가 
+
+네트워크상태 확인 명령어
+
+라우팅테이블 확인 명령 
+netstat -r 
+
+netstat -rn    n:호스트명 대신에  ip확인하기 
+
+현재 열려있는 포트번호 확인하기 - 현재 수신중인 포트번호들
+net stat -an   
+net stat -an | grep LISTEN    a:all, 모든 소켓 
+
+tcpdump 
+
+공유기 종류 : 
+허브  -  초창기 공유기 
+         메모리를 안갖고 있다. 통신할때마다 누가 누군지를 몰라서 
+         브로드캐스팅이 빈번함 바이러스 들어온순간
+         패킷연구하는 사람들 입장에서 로또  
+스위치 - 허브업그레이드, 메모리가 있어서 동일한 공유기래도 누구랑 누구인지 알수있다 
+
+
+텔넷 : 원격으로 다른 컴퓨터를 접근해서 마치 내 컴퓨터처럼 사용하는 프로토콜을 말한다 
+apt 패키지에서 telnet 이 있나 확인 
+dpkg -l | grep telnet 
+
+sudo apt install xinetd 
+sudo apt install telnetd 
+sudo gedit /etc/xinetd.conf 
+
+service telnet 
+{
+    #탭disble공백=공백no
+    disable = no 
+    flags = REUSE
+    socket_type = stream
+    wait = no
+    user = root
+    server = /usr/sbin/in.telnetd
+    log_on_failure = USERID
+    log_type = SYSLOG daemon info
+}
+
+파일저장하고 닫은 다음 
+
+서비스 작동 명령어 
+sudo systemctl start xinetd   #텔넷은 xinetd를 통해서 가동되어야 한다 
+서비스 확인(프로세스가 가동중인지 확인한다)
+ps -ef | grep telnet       
+
+추가사항 
+sudo gedit /etc/services 
+telnet  검색 
+telnet    23/tcp       telnetd   저장하고 나오기 
+
+서버재시작 
+sudo systemctl restart xinetd
+
+telnet 0  
+
+telnet 127.0.0.1 
+본인계정
+패스워드 
+
+ifconfig : 192.168.182.129 
+
+
+윈도우에 telnet  에 설치하기
+cmd  
+pkgmgr /iu:"TelnetClient" 
+그다음 cmd 닫았다 다시 열리 
+
+telnet 192.168.182.129
+
+FTP 서버 설치하기 (vsftpd) -설치와 동시에 시작된다. 
+sudo apt install vsftpd  
+telnet 0 21      
+quit  
+
+윈도우  ftp client 이미 설치되어 있음
+ftp 192.168.182.129
+ls 
+lcd /파이썬   local directory change 
+
+get a.sh 
+put명령어  550 permission deny  될때
+1)방화벽끄기
+sudo ufw disable 
+
+2)폴더에 접근권한 만들기 
+sudo chown -R conan /home/conan  
+ex) sudo chown -R paas /paas
+
+3) vsftpd.conf 파일 수정
+sudo vi /etc/vsftpd.conf //vsftpd.conf 파일 편집하기
+# Uncomment this to enable any form of FTP write command.
+write enable=YES
+
+4)vsftpd 서비스 재시작
+sudo /etc/init.d/vsftpd restart
+
+lcd 파이썬 
+put while문*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,57 @@
+고정아이피 
+
+Edit Virtual machine setting - network - advanced 
+master mac   00:0C:29:0E:9B:DD
+worker1  mac 00:0C:29:AA:1C:86
+
+호스트명 바꾸는 방법 1
+hostnamectl  set-hostname  master
+hostnamectl  set-hostname  worker1
+
+호스트명 바꾸는 방법 2
+sudo vi /etc/hostname   호스트명과 일치해야 한다 
+master  #파일내용수정
+sudo /bin/hostname -F /etc/hostname
+
+
+sudo vi /etc/hostname   모든 worker에 대해서  
+worker1
+
+sudo /bin/hostname -F /etc/hostname
+reboot   (재부팅)
+hostname (확인)
+
+sudo apt install net-tools
+
+sudo gedit /etc/netplan/01-network-manager-all.yaml  
+
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:    #뛰어쓰기는 반드시  스페이스로 들여쓰기  빈칸 넣기 똑같이 해야 한다 
+      ens33:
+         dhcp4: no
+         dhcp6: no
+         addresses: [192.168.58.143/24]       # 내 아 피 
+         gateway4: 192.168.37.2                  # 게이트웨이
+         nameservers:
+               addresses: [8.8.8.8, 8.8.4.4]  # dns서버 (구굴꺼)
+
+적용 :  sudo netplan apply
+확인 : hostname -I (대문자 i  임 ) 
+
+master, worker 모두 각자 아이피는 다르게 해야 한다
+
+sudo gedit /etc/hosts 
+192.168.58.143 master
+192.168.58.144 worker1
+
+ping master
+ping worker1
+또는 
+ping 192.168.58.143
+ping 192.168.58.144
+
+
+

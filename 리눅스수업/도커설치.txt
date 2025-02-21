@@ -1,0 +1,309 @@
+한글 putty  설치 
+telnet 설치 
+arp - 아이피 확인명령어 
+sudo apt install net-tools 
+ifconfig 
+inet  192.168.182.130
+
+https://docs.docker.com/engine/install/ubuntu/
+
+서버                   <-> 클라이언트 
+(서비스를 제공하는 측)      (서비스를 제공받는 측)
+
+오라클 디비 서버       <->  오라클 클라이언트 
+                           (오라클 서버와 접속을 한다)
+                           sqldeveloper 
+웹서버(아파치, 톰캣)   <->  클라이언트(브라우저)
+(http, https 프로토콜에 위해 데이터를 주고 받음, html문서, 이미지, css )
+
+telnet(문자로 서로 주고 받는, 원격으로 상대방 컴퓨터를 접근해서 
+       각종 명령어를 실행시킬 수 있다)
+
+telnet서버  <----------------->  telnet client (putty)
+리눅스에서 xinetd, telnetd
+telnet서버설정
+
+윈도우 os ->  서버용 os가 아니고 Home edition 일경우 서버 설치 못함
+              최소한 professional  버전부터 가능하다 
+              윈도우 서버버전(nt) - 비쌈, 그래서 우리나라 정부가 
+              리눅스 서버 
+              윈도우 서버는 한달에 한번 재부팅, 리눅스 서버는 일년에 
+              한번정도만 재부팅 
+
+리눅스 - 그래픽환경 (GNOM)은 우리가 수업할때나 설치, 실제 서버에는 
+         GUI가 없다.  텔넷서버 열어주고, ftp서버 열어주고, 포트번호 
+         열어주고, 디비서바 만들어서 포트 열어주고  
+
+서버를 설정하려면  리눅스 설치하고 , 웹서버 설치, 디비서버설치, WAS
+웹서버-아파치(정적인 웹페이지만 서비스 한다 )
+WAS - html 사이에 있는 자바 언어를 번역해서 -> 서블릿으로 만들고 
+    -> 요청이 오면 서블릿을 호출해서 동적으로 웹페이를 만들어내서 
+    서비스 한다. 
+
+리눅스서치
+웹서버설치
+디비서버설치 
+스프링프레임워크 -war파일 배포 
+스프링 부트 - jar 파일 java에서 바로 실행 
+
+서버를 2022.1.1 서버를 구축하고 
+서버를 2023.1.1에 서버 복사본을 구축한다 
+중간에 1년이 간극이 있다 아무리 이전 서버 구축 문서를 가지고 하더라도 
+이상하게 어긋난다. 
+
+도커를 사용해서 이미지를 만들어놓으면 그이미지는 그대로 그 이미지를 그대로 
+가져다가 컨테이너를 가동한다.  컨테이너라는 독립된 공간에서 프로그램이 작동
+된다. 
+하나의 웹서버를 구축하려면 도커로 여러개의 컨테이너를 만들어서 데이터를 
+주고 받아야한다. 독립된 공간인데 데이터 주고 받기가 
+컨테이너를 관리하기 위한  새로운 대상 , 쿠버네티스 
+분산처리 환경에서 컨테이너 관리 
+
+선적화물을 가지고 오면  항구에서 컨테이너 내리고 올리고 
+
+서버가 5대가 2000, 2003, 2009, 2012, 2017
+2023년 새로운 시스템을 구축하려고 했더니 서버 5대가 다 용량이 부족
+새로운 서버를 사느냐 
+기존 서버를 활용하느냐 ( 5대를 합쳐서 )
+master        도커/쿠버네티스   도커는 필요한 컨테이너를 만들어 
+worker1       도커/쿠버네티스   쿠버네티스가 컨테이너들을 분산처리 
+worker2       도커/쿠버네티스   적절한 위치에 배치한다 
+worker3       도커/쿠버네티스
+worker4       도커/쿠버네티스
+
+분산처리 - 컴퓨터 여러대를 묶어서 처리, 데이터 처리 위주(하둡)
+
+도커 명령어 
+도커 이미지 - 어플리케이션을 실행하기위한 파일들을 모아놓은것 
+             사진찍듯이 어떤 시점을 저장해놓는곳
+
+도커 컨테이너 - 도커이미지가 실행된다. 
+
+두가지 CE(무료버전), EE(상업용) 
+
+윈도용, mac, 리눅스  
+
+
+도커 - 하나의 실행환경 
+sudo docker image --help   도커 이미지 관련 도움말 
+sudo docker image ls       로컬에 있는 도커 이미지 목록 보기 
+sudo docker rmi 이미지아이디
+image is being used by stopped container c4b492f8a834
+컨테이너에서 사용중인 이미지는 삭제가 안된다. 
+컨테이너 
+sudo docker container ls  
+sudo docker rmi -f 5d0da3dc9764  
+콘솔창에서 복사 붙여넣기 (ctrl-enter/마우스오른쪽)
+
+예제2) 
+mkdir exam2 
+cd exam2
+
+#심플한 웹서버 - go라는 언어로 
+vi main.go  
+package main
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func main(){
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+        log.Println("received request")
+        fmt.Fprintf(w, "Hello Docker")
+    })
+
+    log.Println("start server")
+    server := &http.Server{Addr:":8080"}
+    if err := server.ListenAndServe(); err != nil{
+        log.Println(err)
+    }
+}
+
+vi Dockerfile 
+FROM golang:1.9     #go언어 1.9 이미지 가져와라 
+RUN mkdir /echo     #도커 컨테이너 안에 echo폴더 만들고 
+COPY main.go  /echo  #폴더에 있는 파일을 도커컨테이너의 /echo 폴더로 옮겨라
+
+CMD ["go", "run", "/echo/main.go"]#실행명령어 
+go run /etc/main.go 
+
+
+vi Dockerfile 
+FROM golang:1.9     
+RUN mkdir /echo     
+COPY main.go  /echo  
+CMD ["go", "run", "/echo/main.go"]
+
+:!q 
+
+sudo docker build -t exam2/hello2  . 
+
+mv DockerFile Dockerfile 
+
+#도커를 실행한다 
+#run -t  태그명으로 실행한다. exam2/hello2 
+#지금 만든게 웹서버, 이 프로그램이 내부적으로 8080포트사용중이다
+#컨테이너의 8080 포트를 외부로 포워딩 시켜야 한다 
+#-p 외부포트:컨테이너포트
+sudo docker run -t -p 9000:8080 exam2/hello2 
+
+현재 foreground 에서 서버가 작동중이라  ctrl-z 을 눌러  
+background 로 보내자 
+안먹힐 경우 직접 리눅스 터미널로 가서 
+sudo docker ps  
+프로세서 상태에 up  이 있으면 작동중임 
+
+sudo docker stop 컨테이너아이디 
+# 데몬으로 실행시키자 -d  
+sudo docker run -d -t -p 9000:8080 exam2/hello2 
+
+curl http://127.0.0.1:9000
+
+#ifconfig  해서 본인 아이피 보기 
+http://192.168.182.130:9000/
+
+
+
+#톰캣 이미지 사용하기 
+sudo docker search tomcat 
+sudo docker search --help 
+
+sudo docker search --limit 5 tomcat 
+
+#이미지 불러오기 
+sudo docker image pull tomcat:8
+
+#컨테이너에서 이미지 실행하기 
+#컨테이너 아이디라 접근하기 어려움 , 임시이름 부여 
+#간단하게 컨테이너 이름으로 접근하자 
+sudo docker run -d --name="tomcat-test" -p 9090:8080 tomcat:8
+sudo docker ps  확인명령어 
+
+sudo docker stop tomcat-test    컨테이너 정지 
+sudo docker ps
+sudo docker restart tomcat-test 컨테이너 재시작, 
+삭제는 컨테이너를 정지시킨후 rm을 사용한다 
+실행중인 컨테이너는 -f (강제로) 삭제한다 
+
+#sudo docker tomcat-test:/usr/local/tomcat 
+
+mkdir ~/myhome 
+cd ~/myhome 
+vi index.html
+<html>
+    <body>
+        <h1>Hello HTML</h1>
+    </body>
+</html>
+
+이 파일을 컨테이너 안으로 복사해서 톰캣을 실행시킨다 
+
+run : 컨테이너 자체 실행
+exec : 실행중인 컨테이너 안에 있는 명령어를 실행  
+sudo docker exec -it tomcat-test /bin/bash 
+
+톰캣 컨테이너 안에서 폴더 작업을 했음 
+ls 
+cd webapps 
+ls 
+mkdir ROOT 
+ls 
+rmdir ROOT 
+exit  톰캣 컨테이너를 빠져나옴 
+
+sudo docker --help
+
+#컨테이너에 있는 mkdir  명령어를 실행 
+sudo docker exec -it tomcat-test mkdir ROOT 
+sudo docker exec -it tomcat-test ls 
+sudo docker exec -it tomcat-test pwd 
+
+sudo docker exec -it tomcat-test mkdir /usr/local/tomcat/webapps/ROOT
+#현재 컨테이이너 밖에 존재하는 index.html 파일을 컨테이너의 
+/usr/local/tomcat/webapps/ROOT에 복사한다 
+
+sudo docker cp index.html tomcat-test:/usr/local/tomcat/webapps/ROOT
+
+톰캣서버시작
+sudo docker exec -it tomcat-test ./bin/startup.sh 
+
+톰캣서버종료
+sudo docker exec -it tomcat-test ./bin/shutdown.sh 
+
+각자아이피 
+http://192.168.182.130:9090/
+
+ROOT 폴더만들어서 웹코딩을 놓던가 아니면   ROOT.war파일 만들어서 
+webapps 복사해놓고 서버가동하면 자동으로 war 파일을 풀면서 웹사이트로 인식된다. 
+
+myhome 에서 만들것 
+
+vi Dockerfile 
+FROM tomcat:8
+RUN mkdir /usr/local/tomcat/webapps/ROOT    
+COPY *.html  /usr/local/tomcat/webapps/ROOT  
+
+sudo docker rm tomcat-myhome 
+
+sudo docker build -t exam/myhome .
+
+sudo docker run -t -d --name="tomcat-myhome" -p 9001:8080 exam/myhome 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

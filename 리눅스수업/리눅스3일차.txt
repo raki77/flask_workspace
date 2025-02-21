@@ -1,0 +1,365 @@
+디렉토리( linux에서는 inode 방식) - 각 파일이 디렉토리마다 고유의 정수값을 부여한다 
+디렉토리 관련 명령어 
+pwd -  현재 내가 있는 위치 확인 
+cd - 디렉토리 이동 
+     cd / 루트로 이동 
+     cd ~ 자기 홈으로 이동 
+     cd ..  부모폴더로 이동 
+     cd 자식폴더   자식폴더로 이동 
+
+mkdir - 만들기, (-p : 경로 포함해서 폴더를 만들어 준다) 
+rmdir - 삭제, 비어있는 폴더만 삭제 가능 
+       ( rm -rf 디렉토리명)-서브디렉토리포함까지 전부 삭제  
+
+파일관련 명령어 
+ls 파일목록 확인(디렉토리까지)   drwxrwxrwx  맨앞에 d이면 디렉토리  rwx는 각각 
+                               read, write, execute 권한을 의미한다 
+ls -l   파일목록정보 상세히 
+ls -a   숨김폴더까지           . 로 시작하는 파일이나 폴더는 숨김속성이다 
+ls -al   숨김폴더까지 포함해서 상세하게 
+ls -al | more  목록이 너무 많을때 한페이지씩 보고자 할때 (파이프라인을 통해)
+               ls 명령과 more가 연결된다. 
+               ls -al 의 출력결과가 more의 입력이 된다. 
+
+touch 파일명: 파일 만들기랑 정보업데이트  
+cat 파일명 : 파일의 내용보기 
+cat > 파일명 : 파일 새로 만들기 종료 ctrl-c 
+cat >> 파일명 : 기존 파일에 추가 종료 ctrl-c 
+
+>    : 출력장치가 화면인데 출력장치를  기억장치로 바꾼다 
+>>   : 추가의미 
+
+ls -al > 파일명 
+
+cp 원본  목적지   : 파일복사 
+rm 파일명 : 파일삭제 
+mv 파일명1 파일명2 : 파일이동 또는 파일명이나 폴더명 수정시 사용한다 
+
+파일 내용을 특정위치부터 
+head 위치값 파일 
+***********************************************
+tail -f  파일명 :  실시간으로 보통 로그볼때 유용함
+***********************************************
+
+grep 패턴이나 검색어   파일명   : 해당 파일에서 특정패턴이나 검색어를 찾는다 
+grep ^[a-b] 파일명 
+ps -ef | grep tomcat 
+
+find 지정된 위치에서 특정 조건을 만족하는 파일을 찾는다 
+
+
+문제1) 본인 계정 홈에 /home/conan 
+cd ~ 
+       findtest 라는 이름의 디렉토리 생성 
+          t, t1, t2, t3, test1, test2, test3, testtest1234 
+          testtest11, testtest22   
+          파일만 만들기  
+           
+find . -name "t"    현재경로에서 파일명이 t인 파일을 검색한다 
+find / -name "t"    linux root 디렉토리(전체시스템을) 검색해서 파일명이 t인것을 찾는다 
+
+프로세스를 그냥 사용하면 본인 계정의 권한에 따른다 
+우분트에서는 sudo 를 붙이면 프로세스를 관리자권한으로 실행시칸다 
+
+sudo find / -name "t"    :리눅스(모든 os)에 프로세스 강제중단 키는 ctrl-c
+sudo find ~conan -name "t" :특정계정의 홈디렉토리에서 검색한다 
+
+와일드카드  ?(한글자), *     "t?"
+find . -name "t?"
+touch ta tb tc.txt 
+
+find . -name "t?"       ? 썼을때는  t다음에 아무 문자나 하나가 와야 한다 
+ta tb t1 t2 t3 
+
+find . -name "t[0-9]"   t다음문자가 0~9 에 해당할때 
+t1 t2 t3만 검색
+
+* - 몇글자인지 중요하지 않다. t라는 패턴이 존재하면, t다음글자는 
+    무엇이든 상관이 없다 
+
+find . -name "t*"
+
+touch a aa aaa 
+
+find . -name "test*"
+find . -name "testtest[0-9]"
+
+find . -name "testtest[0-9][0-9]"
+
+find /etc -name "passwd"  -exec  cat {}  \; 
+
+-exec 실행할프로세스명   {}파일들    \;  종료문자 
+
+perm : permission   권한 
+폴더나 파일을 만들면 권한이 주어진다.  rwx rwx rwx -> 111 111 111 -> 777
+                                    rw- r-- r-- -> 110 100 100 -> 644                
+홈디렉토리에서 권한이 644(rw- r-- r--)인 파일을 찾아라 
+find ~ perm 644 
+
+문제2) findtest 폴더로부터 t1,t2,t3 파일 삭제하기 
+문제2) findtest 폴더로부터 testtest로 시작하는 파일 삭제하기 
+
+find함수가 내놓는 값이 파일 목록이라서 -exec 써 grep까지 하기
+find함수는 파이프(|) 따로 못씀
+find /etc -name "passwd"  -exec  grep "conan" {}  \; 
+
+현재내위치 : 홈 
+
+find ~/findtest -name "t[0-9]" -exec rm {} \;
+find ~/findtest -name "testest*" -exec rm {} \;
+
+문제1. /var/log 에서 파일 목록중에 vmware  가 들어가는 목록만  
+vmwarelist.txt 라는 이름으로 현재 홈디렉토리에 저장하시오 
+
+ls /var/log | grep vmware > vmwarelist.txt  
+
+ls /var/log 입력으로 삼아서 grep 명령어를 통해서 저 파일로부터 vmware를 검색해라 
+출력방향 > 바꿔서 파일로 출력해라 
+
+
+
+문제2 /etc/passwd 에서 root 로 시작하는 모든 라인을 출력하여 
+root.txt 파일을 만드시오 
+
+패턴에서 ^ 시작하는 
+패턴에서 $로 끝나는
+패턴에서 [0-9]
+
+grep "^root"  /etc/passwd > root.txt  
+
+문제3. /var/log폴더에서 파일명이 lastlog인 파일을 찾아서 목록 출력하기 
+파일명을 검새 : find , 파일의 내용: grep
+
+sudo find /var/log -name lastlog  -exec ls -l {} \;
+
+문제4. /etc  폴더에서 파일의 내용에   the가 들어있는 파일 출력하기 
+
+sudo grep "the" /etc/* 
+
+
+
+which :명령어 위치 찾기 
+which ls 
+which more 
+which find 
+which touch 
+
+whereis ls 
+\
+
+file : 파일의 종류 확인, 리눅스는 파일의 확장자가 필수가 아니다. 확장자로 
+       파일의 종류를 알길이 없다. 
+
+file t   
+empy 
+
+ls /var/log 
+file /var/log/apt
+
+file /var/log/gpu-manager.log 
+cat /var/log/gpu-manager.log 
+
+file /var/log/auth.log  
+file /var/log/hp 
+file /var/log/boot.log 
+
+디렉토리 사용량을 출력 
+du /var/log 
+
+sudo du -s /var/log  전체 사용량- K byte 
+ 
+sudo du -sh  /var/log    -h 인간이 읽을 수 있는 
+
+현재시스템에서 사용중인 파일시스템 
+df -h 
+
+
+ls -l /etc | less
+
+ps : 리눅스안에서 작동중인 프로세스 확인 명령어
+
+필터 : grep 명령어 ps -ef  실행결과를 입력으로 해서  grep이 그 입력결과로부터 
+원하는 정보를 찾는다 
+
+ps -ef 
+ps -ef | grep hash
+
+입출력 방향 바꾸는걸 리다이렉션 이라고 한다 
+
+ls -1 > list.txt 
+cat list.txt 
+
+ls -l >> list.txt   추가하기 
+cat list.txt 
+
+sort < list.txt    sort가 list.txt 를 입력으로 받아 정렬하여 출력한다 
+
+sort < list.txt > out.txt   정렬하여 결과를 out.txt로 출력한다 
+cat out.txt 
+
+vi 에디터  - 전통적인 리눅스  os 편집기 
+서버에 gui를 설치하면 gedit  편집기사용가능 실제 서버에 거의 gui 
+설치를 안해줌 그래서 사용못할경우가 있다. 
+vi 에디터는 리눅스가 설치되어있담면 기본으로 설치되는 편집기이다 
+메모장 
+
+vi나  emac나 비슷 
+
+모드형편집기 :   esc  키를 눌러서 입력모드와 명령모드가 토글로 바뀐다. 
+입력모드는 텍스트를 입력할 수 있는 모드 
+명령모드는 텍스트를 수정하거나 삭제하고 복사붙여넣기등의 편집이 가능하다 
+
+esc i, a, o   데이터입력모드 
+esc yy  ctrl-c  복사
+esc p   ctrl-v  붙여넣기 
+esc :wq  파일 저장후  종료 
+esc :q   저장안하고 종료
+esc :!q   수정사항이 있을때 저장안하고 강제 종료 
+
+esc dd    현재 커서가 있는곳의 라인을 삭제한다 
+실습 
+cd ~
+vi a.sh 
+esc i  
+ls -l 
+ls -al 
+esc 눌렀다 떼고 :wq 
+file a.sh   파일 종류 확인하기 
+ls -l a.sh   파일의 정보 상세히 
+
+-rwx 7
+chmode 755  a.sh  파일의 권한을 실행가능하도록 만든다. 
+
+./a.sh  실행시 앞의 폴더명은 생략불가 
+
+sudo apt install openssh-server
+sudo systemctl status ssh
+
+sudo usermod -aG sudo hduser
+
+
+hduser@shjung-VirtualBox:~$ cd /usr/local/hadoop
+
+
+hduser@shjung-VirtualBox:/usr/local/hadoop$ ls -la
+합계 120
+drwxr-xr-x 10 hduser hduser  4096  3월 16  2023 .
+drwxr-xr-x 12 root   root    4096  2월 13 12:35 .. 
+drwxr-xr-x  4 hduser hduser  4096  3월 16  2023 share
+
+
+hduser@shjung-VirtualBox:/usr/local/hadoop/share/doc$ cd hadoop/
+hduser@shjung-VirtualBox:/usr/local/hadoop/share/doc/hadoop$
+hduser@shjung-VirtualBox:/usr/local/hadoop/share/doc/hadoop$ ll
+
+
+root 계정으로 하면 안된다. 
+마스터 컴에서 하둡계정으로 로그온 한다 sudo su hduser 
+cd ~ (홈디렉토리로 이동)
+ssh-keygen –t rsa
+master 에서 slave에 복사하기 
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+ssh-copy-id   –i  ~/.ssh/id_rsa.pub hduser@slave1   계정@호스트명
+ssh-copy-id   -i  ~/.ssh/id_rsa.pub hduser@slave2
+
+각 사이트로 수정 사항 복사
+scp $HADOOP_HOME/etc/hadoop/* slave1:$HADOOP_HOME/etc/hadoop/ 
+scp $HADOOP_HOME/etc/hadoop/* slave2:$HADOOP_HOME/etc/hadoop/
+
+
+
+프로그램 설치시 apt 또는  apt-get  을 사용한다 
+sudo apt update 를 먼저 업데이트 해놓고 시작한다 
+
+레포지토리 - 기본레포지토리로 부터 다운 받는다 
+sudo apt install openjdk-11-jdk-headless  
+
+vi test.java 
+public class test{
+    public static void main(String args[]){
+        System.out.println("Hello java");
+    }
+}
+
+javac test.java 
+java test
+
+
+gedit test.java  메모장이 열림 
+
+ls /var/log 
+
+vi /var/log/boot.log    permission Deny 권한없다. 
+
+권한도 없는 파일가서 수정상태시  저장 안하고 강제종료 esc :q! 
+
+sudo vi /var/log/boot.log
+
+
+C:\Program Files (x86)\VMware\VMware Player\bin\;%JAVA_HOME%\bin;C:\oraclexe\app\oracle\product\11.2.0\server\bin;C:\Program Files\Common Files\Oracle\Java\javapath;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\;%SYSTEMROOT%\System32\OpenSSH\;%MAVEN_HOME%\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
