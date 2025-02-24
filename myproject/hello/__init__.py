@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from . import guestbook
+from . import rest_guestbook # 2025-02-24
 
 def create_app(test_config=None):   
     app = Flask(__name__, instance_relative_config=True) # creates the flask instance
@@ -21,6 +22,7 @@ def create_app(test_config=None):
     
     # 파일결합 추가됨. 파일이 많아지면
     app.register_blueprint(guestbook.blueprint)
+    app.register_blueprint(rest_guestbook.app)
     return app
 
 """ 

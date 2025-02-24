@@ -59,6 +59,9 @@ def guestbook_save():
     db = DBModule.Database()
     db.execute(sql, (title, writer, contents))
     db.close()
+    
+    # 글을 등록하고 나면 클라이언트에서 보낸 정보가 request 객체에 남아있다.
+    # 삭제 시키고 다시 클라이언트로부터 요청이 들어오는 것처럼 바꾸는게 redirect이다.
     return redirect("/guestbook/list")
 
 

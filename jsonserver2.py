@@ -6,9 +6,12 @@ api = Api(app)
 
 todos = {'1':'go to company', '2': 'go to movie'}
 
+# http://127.0.0.1:5000/1
 class TodoSimple(Resource):
+    
     def get(self, todo_id):
         return {todo_id: todos[todo_id]}
+    
     def post(self, todo_id):
         todos[todo_id] = request.form['data']
         return {todo_id: todos[todo_id]}
